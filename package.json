@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start-dev": " SET \"NODE_ENV=development\" && SET \"LOG=true\" && node index.js"
+    "start-dev": " SET \"NODE_ENV=development\" && SET \"LOG=true\" && node index.js",
+    "test": " SET \"NODE_ENV=testing\" && SET \"LOG=false\" && jest --detectOpenHandles"
   },
   "author": "Julio Ojeda",
   "license": "MIT",

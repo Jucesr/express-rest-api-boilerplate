@@ -1,5 +1,5 @@
 const log = (message, e) => {
-    if(process.env.LOG){
+    if(process.env.NODE_ENV != 'testing'){
       console.log(message);
       if(e)
         console.error(e);

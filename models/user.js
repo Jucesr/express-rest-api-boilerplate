@@ -32,7 +32,10 @@ let User = sequelize.define(ENTITY_NAME, {
   password: {
     type: Sequelize.STRING
   }
-}, { hooks, ENTITY_NAME });
+}, { 
+  hooks, 
+  tableName: ENTITY_NAME 
+});
 
 
 User.prototype.toJSON = function () {

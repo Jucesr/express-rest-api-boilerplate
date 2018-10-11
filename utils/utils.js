@@ -1,8 +1,11 @@
+const errors = require('../config/errors');
+
 const parseSequelizeError = (error) => {
+    
     let parsedErrorMessage;
     switch (error.name) {
         case "SequelizeDatabaseError":
-            parsedErrorMessage = error.parent.message
+            parsedErrorMessage = errors.INTERNAL_ERROR
         break;
 
         case "SequelizeValidationError":
@@ -14,7 +17,7 @@ const parseSequelizeError = (error) => {
         break;
     
         default:
-            parsedErrorMessage = error
+            parsedErrorMessage = errors.INTERNAL_ERROR
             break;
     }
     return parsedErrorMessage

@@ -1,5 +1,6 @@
 const logService = require('../services/log.service');
 const utils = require('../utils/utils')
+const errors = require('../config/errors');
 
 module.exports = (entity) => {
   return (e, req, res, next) => {
@@ -17,11 +18,11 @@ module.exports = (entity) => {
             
         default:
             //  Unknow error (It should never enter here)
-            error_message = e
+            error_message = errors.INTERNAL_ERROR
         break;
     }
 
-      res.status(e.http_code || 400).send({
+      res.status(400).send({
         error: error_message
       });
     logService.log(`\n\nAn error has occurred in route '${entity}'`, error_message);
