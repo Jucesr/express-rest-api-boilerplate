@@ -25,6 +25,14 @@ module.exports = (sequelize, DataTypes) => {
   
   Estimate = addCrudOperations(Estimate, ENTITY_NAME);
 
+  Estimate._getEstimateItems = function (id) {
+    return this._findByIdAndDoAction(id, entity => entity.getEstimate_Items())
+  }
+
+  Estimate.associate = function (models) {
+    Estimate.hasMany(models.estimate_item)
+  }
+
   return Estimate;
 }
 

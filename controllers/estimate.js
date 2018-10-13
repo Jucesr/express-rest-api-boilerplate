@@ -26,6 +26,17 @@ module.exports = (Estimate) => {
 
     router.get('/', authenticate, crudOperations._getAll(Estimate))
 
+    router.get('/:id/estimate_item', authenticate ,(req, res, next) => {
+        const id = req.params.id
+        Estimate._getEstimateItems(id).then(entities => {
+            res.status(200).send(entities)
+            logService.log(`Estimate items were sent`)
+        }).catch( e => next({
+            code: !!e.isCustomError ? 0 : 1,
+            body: !!e.isCustomError? e.body : e
+        }) )
+    })
+
     router.use(error_handler('Estimate'))
 
 return router;

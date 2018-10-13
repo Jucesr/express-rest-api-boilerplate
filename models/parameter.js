@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(255)
     },
     value: {
-      type:   DataTypes.STRING
+      type: DataTypes.STRING
     }
   }, { 
       tableName: ENTITY_NAME,

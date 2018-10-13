@@ -2,18 +2,13 @@
 const dataTypes = require('sequelize');
 const sequelize = require('../services/db.service');
 
-const user = require('./user')
-const project = require('./project')
-const estimate = require('./estimate')
-const parameter = require('./parameter')
+const files = ['user', 'project', 'estimate', 'parameter', 'estimate_item'];
 
-let models = {
-    user: user(sequelize, dataTypes),
-    project: project(sequelize, dataTypes),
-    estimate: estimate(sequelize, dataTypes),
-    parameter: parameter(sequelize, dataTypes)
-}
+let models = {}
 
+files.forEach(file => {
+  models[file] = require(`./${file}`)(sequelize, dataTypes)
+})
 
 Object.keys(models).forEach(function(modelName) {
   

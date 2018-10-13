@@ -47,6 +47,7 @@ module.exports = (sequelize, DataTypes) => {
   Project.associate = function (models) {
     Project.hasMany(models.estimate)
     Project.hasMany(models.parameter)
+    Project.hasMany(models.estimate_item)
   }
 
   return Project;

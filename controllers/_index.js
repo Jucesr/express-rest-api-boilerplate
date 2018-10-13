@@ -1,15 +1,12 @@
 const Models = require('../models/_index');
 
-const UserController = require('./user')
-const ProjectController = require('./project')
-const EstimateController = require('./estimate')
-const ParameterController = require('./parameter')
+const files = ['user', 'project', 'estimate', 'parameter', 'estimate_item']
 
-let controllers = {
-    user: UserController(Models.user),
-    project: ProjectController(Models.project),
-    estimate: EstimateController(Models.estimate),
-    parameter: ParameterController(Models.parameter)
-}
+let controllers = {}
+
+files.forEach(file => {
+    controllers[file] = require(`./${file}`)(Models[file])
+})
+
 
 module.exports = controllers;
