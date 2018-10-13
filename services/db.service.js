@@ -10,7 +10,7 @@ const database = new Sequelize(
     config.password, {
       host: config.host,
       dialect: config.dialect,
-      logging: logService.log,
+      logging: config.shouldLog ? logService.log : () => {},
       pool: {
         max: 5,
         min: 0,

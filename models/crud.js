@@ -72,10 +72,27 @@ module.exports = (Model, ENTITY_NAME) => {
   }
   
   /** Get all entities in the dabatase.
-   * @param {string} id 
    */
-  Model._findAll = function (id) {
-    return this.findAll(id)
+  Model._findAll = function () {
+    return this.findAll()
+  }
+
+  /** Serach an entity in the dabatase by ID. Once it found it Execute callback with entity.
+   * @param {string} id 
+   * @param {callback} callback - The action that will be executed, tipically 'entity => entity.action()'
+   */
+  Model._findByIdAndDoAction = function (id, callback) {
+    return this.findById(id).then(
+      entity => {
+        if(!entity){
+          return Promise.reject({
+            isCustomError: 1,
+            body: errors.ENTITY_NOT_FOUND.replace('@ENTITY_NAME', ENTITY_NAME)  
+          })
+        }
+        return callback(entity)
+      }
+    )
   }
   
   /** Returns the name of the Model

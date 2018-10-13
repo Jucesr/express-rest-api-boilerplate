@@ -22,10 +22,11 @@ const _create = (Model, fieldsToInclude) => {
 
     }
     
-    
+    debugger;
     Model._create(new_entity).then( stored_entity => {
         res.send(stored_entity)
-        logService.log(`An ${Model.getTableName()} was saved`, stored_entity)
+        logService.log(`An ${Model.getTableName()} was saved`)
+        
     }).catch( e => next({
         code: !!e.isCustomError ? 0 : 1,
         body: !!e.isCustomError? e.body : e

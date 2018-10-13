@@ -25,6 +25,6 @@ module.exports = (entity) => {
       res.status(400).send({
         error: error_message
       });
-    logService.log(`\n\nAn error has occurred in route '${entity}'`, error_message);
+    logService.log(`\n\nAn error has occurred in route '${entity}'`, e);
   }
 }

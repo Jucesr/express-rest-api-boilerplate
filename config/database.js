@@ -7,10 +7,11 @@
 module.exports = {
     development: {
         database: 'DEV_TESTING',
-        username: 'sas',
+        username: 'sa',
         password: '1234',
         host: 'localhost',
         dialect: 'mssql',
+        shouldLog: false
     },
     testing: {
         database: 'DEV_TESTING',
@@ -18,6 +19,7 @@ module.exports = {
         password: '1234',
         host: 'localhost',
         dialect: 'mssql',
+        shouldLog: false
     },
     production: {
         database: 'database',
@@ -25,5 +27,6 @@ module.exports = {
         password: 'password',
         host: 'host',
         dialect: 'mssql',
+        shouldLog: false
     } 
 }

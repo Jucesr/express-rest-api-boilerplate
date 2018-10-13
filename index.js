@@ -10,8 +10,7 @@ const cors = require('cors');
 const environment = process.env.NODE_ENV;
 
 //  Controllers
-const userController = require('./controllers/user')
-const projectController = require('./controllers/project')
+const controllers = require('./controllers/_index')
 
 //  App configuration
 const config = require('./config/app')[environment];
@@ -46,8 +45,10 @@ app.use(helmet({
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use('/user', userController);
-app.use('/project', projectController);
+app.use('/user', controllers.user);
+app.use('/project', controllers.project);
+app.use('/estimate', controllers.estimate);
+app.use('/parameter', controllers.parameter);
 
 if(environment != 'testing'){
     

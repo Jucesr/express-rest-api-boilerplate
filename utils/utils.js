@@ -13,7 +13,11 @@ const parseSequelizeError = (error) => {
         break;
 
         case "SequelizeUniqueConstraintError":
-            parsedErrorMessage = `${error.errors[0].value} is already taken`
+            parsedErrorMessage = errors.FIELD_DUPLICATED.replace('@VALUE', error.errors[0].value)
+        break;
+
+        case "SequelizeForeignKeyConstraintError":
+            parsedErrorMessage = errors.FOREING_KEY_MISSING
         break;
     
         default:

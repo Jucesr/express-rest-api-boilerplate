@@ -1,50 +1,53 @@
-const Sequelize = require('sequelize');
-const sequelize = require('../services/db.service');
 const addCrudOperations = require('./crud');
 
 const ENTITY_NAME = 'Project';
 
-let Project = sequelize.define(ENTITY_NAME, {
-  name: {
-    type: Sequelize.STRING(50)
-  },
-  code: {
-    type: Sequelize.STRING(20),
-    unique: true
-  },
-  description: {
-    type: Sequelize.STRING(255)
-  },
-  status: {
-    type: Sequelize.STRING(10)
-  },
-  type: {
-    type: Sequelize.STRING(10)
-  },
-  currency: {
-    type:   Sequelize.ENUM,
-    values: ['MXN', 'USD']
-  },
-  uen: {
-    type:   Sequelize.ENUM,
-    values: ['MXL', 'MTY', 'TIJ', 'CDMX']
+module.exports = (sequelize, DataTypes) => {
+
+  let Project = sequelize.define(ENTITY_NAME, {
+    name: {
+      type: DataTypes.STRING(50)
+    },
+    code: {
+      type: DataTypes.STRING(20),
+      unique: true
+    },
+    description: {
+      type: DataTypes.STRING(255)
+    },
+    status: {
+      type: DataTypes.STRING(10)
+    },
+    type: {
+      type: DataTypes.STRING(10)
+    },
+    currency: {
+      type:   DataTypes.ENUM,
+      values: ['MXN', 'USD']
+    },
+    uen: {
+      type:   DataTypes.ENUM,
+      values: ['MXL', 'MTY', 'TIJ', 'CDMX']
+    }
+  }, { 
+      tableName: ENTITY_NAME,
+      underscored: true 
+  });
+  
+  Project = addCrudOperations(Project, ENTITY_NAME);
+
+  Project._getEstimates = function (id) {
+    return this._findByIdAndDoAction(id, entity => entity.getEstimates())
   }
-}, { 
-    tableName: ENTITY_NAME 
-});
 
+  Project._getParameters = function (id) {
+    return this._findByIdAndDoAction(id, entity => entity.getParameters())
+  }
 
-Project.prototype.toJSON = function () {
-  const values = Object.assign({}, this.get());
+  Project.associate = function (models) {
+    Project.hasMany(models.estimate)
+    Project.hasMany(models.parameter)
+  }
 
-  delete values.password;
-
-  return values;
-};
-
-Project = addCrudOperations(Project, ENTITY_NAME);
-
-//  Creates the table if it does not exits.
-Project.sync();
-
-module.exports = Project
+  return Project;
+}

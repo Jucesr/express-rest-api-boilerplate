@@ -1,11 +1,12 @@
 {
-  "name": "express-mssql-boilerplate",
+  "name": "ithree-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start-dev": " SET \"NODE_ENV=development\" && SET \"LOG=true\" && node index.js",
-    "test": " SET \"NODE_ENV=testing\" && SET \"LOG=false\" && jest --detectOpenHandles"
+    "start-dev": " SET \"NODE_ENV=development\" && node index.js",
+    "test": " SET \"NODE_ENV=testing\" && jest --detectOpenHandles",
+    "debug": " SET \"NODE_ENV=development\" && node --inspect-brk index.js"
   },
   "author": "Julio Ojeda",
   "license": "MIT",
