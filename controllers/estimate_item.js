@@ -15,7 +15,8 @@ module.exports = (EstimateItem) => {
         'code',
         'quantity',
         'hierachy_level',
-        'is_item'
+        'is_item',
+        'indirect_percentage'
     ]))
 
     router.delete('/:id', authenticate, crudOperations._delete(EstimateItem))
@@ -27,7 +28,8 @@ module.exports = (EstimateItem) => {
         'code',
         'quantity',
         'hierachy_level',
-        'is_item'
+        'is_item',
+        'indirect_percentage'
     ]))
 
     router.get('/:id', authenticate, crudOperations._getByID(EstimateItem))

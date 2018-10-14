@@ -24,6 +24,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     is_item: {
       type: DataTypes.BOOLEAN
+    },
+    indirect_percentage: {
+      type: DataTypes.DECIMAL(5,2)
     }
   }, { 
       tableName: ENTITY_NAME,
@@ -33,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
   EstimateItem = addCrudOperations(EstimateItem, ENTITY_NAME);
 
   EstimateItem.associate = function (models) {
-    //EstimateItem.hasOne(models.line_item)
+    EstimateItem.belongsTo(models.line_item, {foreignKey: 'line_item_id'})
     //EstimateItem.hasOne(models.estimate_item_qto)
     //EstimateItem.belongsTo(models.wbs_item)
   }

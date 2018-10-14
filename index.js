@@ -50,6 +50,7 @@ app.use('/project', controllers.project);
 app.use('/estimate', controllers.estimate);
 app.use('/parameter', controllers.parameter);
 app.use('/estimate_item', controllers.estimate_item);
+app.use('/line_item', controllers.line_item);
 
 if(environment != 'testing'){
     

@@ -1,6 +1,6 @@
 const Models = require('../models/_index');
 
-const files = ['user', 'project', 'estimate', 'parameter', 'estimate_item']
+const files = ['user', 'project', 'estimate', 'parameter', 'estimate_item', 'line_item']
 
 let controllers = {}
 
