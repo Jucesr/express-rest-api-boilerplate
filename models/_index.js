@@ -5,7 +5,15 @@ const sequelize = require('../services/db.service');
 //sequelize.drop();
 
 //  The order of these entities matters. 
-const files = ['user', 'project', 'estimate', 'parameter', 'line_item', 'estimate_item'];
+const files = [
+  'user', 
+  'project', 
+  'estimate', 
+  'parameter', 
+  'line_item',
+  'estimate_item', 
+  'material'
+]
 
 let models = {}
 
@@ -13,17 +21,6 @@ let models = {}
 files.forEach(file => {
   models[file] = require(`./${file}`)(sequelize, dataTypes)
 })
-
-
-// if(process.env.NODE_ENV == 'development'){
-//   //  Drop all tables in rever order.
-//   files.reverse().forEach(async file => {
-//     await models[file].drop()
-//   })
-// }
-
-
-//  Once all the tables have been dropped it can continue.
 
 Object.keys(models).forEach(async function(modelName) {
 

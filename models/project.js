@@ -49,6 +49,7 @@ module.exports = (sequelize, DataTypes) => {
     Project.hasMany(models.parameter)
     Project.hasMany(models.estimate_item)
     Project.hasMany(models.line_item)
+    Project.hasMany(models.material)
   }
 
   return Project;

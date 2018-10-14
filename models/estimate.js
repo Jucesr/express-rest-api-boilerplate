@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(255)
     },
     currency: {
-      type:   DataTypes.ENUM,
+      type: DataTypes.ENUM,
       values: ['MXN', 'USD']
     }
   }, { 

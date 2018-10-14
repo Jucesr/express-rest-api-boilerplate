@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(255)
     },
     uom: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(20)
     }
   }, { 
       tableName: ENTITY_NAME,
