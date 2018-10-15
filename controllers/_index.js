@@ -8,7 +8,8 @@ const files = [
     'estimate_item', 
     'line_item', 
     'material',
-    'line_item_detail'
+    'line_item_detail',
+    'material_quotation'
 ]
 
 let controllers = {}

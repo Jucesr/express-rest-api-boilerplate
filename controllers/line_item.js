@@ -2,6 +2,7 @@ const express = require('express');
 const error_handler = require('../middleware/error_handler')
 const authenticate = require('../middleware/authenticate')
 const crudOperations = require('./crud');
+const logService = require('../services/log.service');
 const router = express.Router()
 
 module.exports = (LineItem) => {
@@ -32,6 +33,7 @@ module.exports = (LineItem) => {
     router.get('/:id/detail', authenticate ,(req, res, next) => {
         const id = req.params.id
         LineItem._getDetails(id).then(entities => {
+            debugger;
             res.status(200).send(entities)
             logService.log(`Line item details were sent`)
         }).catch( e => next({

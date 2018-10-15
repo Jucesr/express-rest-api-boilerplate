@@ -40,6 +40,10 @@ module.exports = (sequelize, DataTypes) => {
   
   Material = addCrudOperations(Material, ENTITY_NAME);
 
+  Material.associate = function (models) {
+    Material.hasMany(models.material_quotation)
+  }
+
   return Material;
 }
 

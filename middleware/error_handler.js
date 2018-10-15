@@ -21,7 +21,7 @@ module.exports = (entity) => {
             error_message = errors.INTERNAL_ERROR
         break;
     }
-
+      debugger;
       res.status(400).send({
         error: error_message
       });

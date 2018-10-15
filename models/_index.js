@@ -13,7 +13,8 @@ const files = [
   'line_item',
   'estimate_item', 
   'material',
-  'line_item_detail'
+  'line_item_detail',
+  'material_quotation'
 ]
 
 let models = {}
