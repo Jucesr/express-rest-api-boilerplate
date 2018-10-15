@@ -29,7 +29,16 @@ module.exports = (LineItem) => {
 
     router.get('/', authenticate, crudOperations._getAll(LineItem))
 
-    
+    router.get('/:id/detail', authenticate ,(req, res, next) => {
+        const id = req.params.id
+        LineItem._getDetails(id).then(entities => {
+            res.status(200).send(entities)
+            logService.log(`Line item details were sent`)
+        }).catch( e => next({
+            code: !!e.isCustomError ? 0 : 1,
+            body: !!e.isCustomError? e.body : e
+        }) )
+    })
 
     router.use(error_handler('LineItem'))
 

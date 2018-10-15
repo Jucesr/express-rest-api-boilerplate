@@ -12,7 +12,8 @@ const files = [
   'parameter', 
   'line_item',
   'estimate_item', 
-  'material'
+  'material',
+  'line_item_detail'
 ]
 
 let models = {}
@@ -30,11 +31,9 @@ Object.keys(models).forEach(async function(modelName) {
   }
 
   //  Create the tables
-  await models[modelName].sync({force: true})
+  //await models[modelName].sync({force: true})
 });
-
-
-
+debugger;
 models.sequelize = sequelize;
 models.dataTypes = dataTypes;
 

@@ -1,11 +1,11 @@
 const logService = require('../services/log.service');
 
 const _create = (Model, fieldsToInclude) => {
-
+    
   return (req, res, next) => {
 
     let new_entity = {};
-
+    
     //  Prepare the new entity with all the required fields
     for (let index = 0; index < fieldsToInclude.length; index++) {
         
@@ -22,7 +22,6 @@ const _create = (Model, fieldsToInclude) => {
 
     }
     
-    debugger;
     Model._create(new_entity).then( stored_entity => {
         res.send(stored_entity)
         logService.log(`An ${Model.getTableName()} was saved`)
