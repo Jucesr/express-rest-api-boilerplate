@@ -1,10 +1,12 @@
 const bcryptService = require('../services/bcrypt.service');
 const authService = require('../services/auth.service');
 const addCrudOperations = require('./crud');
+const errors = require('../config/errors');
 
 const ENTITY_NAME = 'User';
 
 module.exports = (sequelize, DataTypes) => {
+    const Op = sequelize.Op;
 
     const hooks = {
         beforeCreate(user) {
@@ -49,16 +51,50 @@ module.exports = (sequelize, DataTypes) => {
 
     User = addCrudOperations(User, ENTITY_NAME);
 
-    //  Overwrite Create operation.
-
     /**
+     * @param {Object} credentials - Contain credentials to log in. {email, username, password}
+     */
+
+    User._login = function (credentials) {
+        const {username, email, password} = credentials;
+        //let finder = !!username ? username : email
+
+        return User.findAll({
+            where: {
+                [Op.or]: [{username}, {email}]
+            }
+        }).then(entity => {
+            if(entity.length == 0){
+              return Promise.reject({
+                  isCustomError: 1,
+                  body: errors.ENTITY_NOT_FOUND.replace('@ENTITY_NAME', ENTITY_NAME)  
+              })
+            }
+
+            let instance = entity[0];
+            
+            if(!bcryptService.comparePassword(password, instance.password)){
+              return Promise.reject({
+                isCustomError: 1,
+                body: errors.INCORRECT_PASSWORD
+            }) 
+            }
+
+            let user = Object.assign({}, instance.toJSON())
+            user.token = authService.issue({ email: user.email })
+            return user
+
+        })
+    }
+
+    /**@override 
      * @param {Object} entity - An object with all the required properties for User
      */
     User._create = function (entity){
 
         return this.create(entity).then( instance => {
 
-            let user = Object.assign({}, instance.get())
+            let user = Object.assign({}, instance.toJSON())
             user.token = authService.issue({ email: user.email })
             return user
         })
