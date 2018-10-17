@@ -14,12 +14,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     formula: {
       type: DataTypes.STRING(255)
-    },
-    unit_rate_mxn: {
-      type: DataTypes.DECIMAL(10,2)
-    },
-    unit_rate_usd: {
-      type: DataTypes.DECIMAL(10,2)
     }
   }, { 
       tableName: ENTITY_NAME,
