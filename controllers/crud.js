@@ -1,50 +1,40 @@
+const async_handler = require('express-async-handler')
 const logService = require('../services/log.service')
-const errors = require('../config/errors')
 const utils = require('../utils/utils')
 
 const _create = (Model, fieldsToInclude) => {
     
-  return (req, res, next) => {
-
+  return async_handler (async (req, res, next) => {
     
-    let new_entity = {};
+    let new_entity = utils.validateRequiredFields(req.body, fieldsToInclude)
 
-    try {
-        new_entity = utils.validateRequiredFields(req.body, fieldsToInclude);    
-    } catch (error) {
-        return next(error);
-    }
+    let stored_entity = await Model._create(new_entity)
     
-    Model._create(new_entity).then( stored_entity => {
-        res.send(stored_entity)
-        logService.log(`An ${Model.getTableName()} was saved`)
-        
-    }).catch( e => next(e))
+    res.send(stored_entity)
 
-  }
+    logService.log(`An ${Model.getTableName()} was saved`)
+
+  })
 }
+
 
 const _delete = (Model) => {
 
-  return (req, res, next) => {
+  return async_handler ( async (req, res, next) => {
     let id = req.params.id
 
     //  Search entity by ID
-    Model._delete(id).then( 
-        (entity) => {
-            res.status(200).send(entity)
-            logService.log(`${Model.getTableName()} was removed`)
-        
+    let entity = await Model._delete(id)
 
-    }).catch( e => next(e))
+    res.status(200).send(entity)
+    logService.log(`${Model.getTableName()} was removed`)
 
-
-  }
+  })
 }
 
 const _update = (Model, fieldsToInclude) => {
 
-  return (req, res, next) => {
+  return async_handler ( async (req, res, next) => {
 
     let id = req.params.id
     let new_entity = {}
@@ -60,42 +50,38 @@ const _update = (Model, fieldsToInclude) => {
 
     }
 
-    Model._update(id, new_entity).then( 
-        (entity) => {
-            res.status(200).send(entity)
-            logService.log(`${Model.getTableName()} was updated`)
+    let entity = await Model._update(id, new_entity)
+    
+    res.status(200).send(entity)
+    logService.log(`${Model.getTableName()} was updated`)
 
-    }).catch( e => next(e))
-
-  }
+  })
 }
 
 const _getAll = (Model) => {
 
-  return (req, res, next) => {
+  return async_handler ( async (req, res, next) => {
     
-    Model._findAll().then(
-      (entities) => {
-        res.send(entities)
-        logService.log(`${Model.getTableName()} were sent`)
-    }).catch( e => next(e))
-  }
+    let entities = await Model._findAll()
+
+    res.send(entities)
+    logService.log(`${Model.getTableName()} were sent`)
+
+  })
 }
 
 const _getByID = (Model) => {
 
-  return (req, res, next) => {
+  return async_handler ( async (req, res, next) => {
 
     const id = req.params.id
 
-    //  Search entity by ID
-    Model._findById(id).then(
-        entity => {              
-            res.status(200).send(entity)
-            logService.log(`${Model.getTableName()} was sent`)
-
-    }).catch( e => next(e))
-  }
+    let entity = await Model._findById(id)
+    
+    res.status(200).send(entity)
+    logService.log(`${Model.getTableName()} was sent`)
+    
+  })
 }
 
 module.exports = (options) => {
@@ -116,27 +102,27 @@ module.exports = (options) => {
     }
 
     if(!!applyTo.delete){
-      router.post('/', action, _delete(Model, fields.toAdd))
+      router.delete('/:id', action, _delete(Model))
     }else{
-      router.post('/', _delete(Model, fields.toAdd)) 
+      router.delete('/:id', _delete(Model)) 
     }
 
     if(!!applyTo.update){
-      router.post('/', action, _update(Model, fields.toAdd))
+      router.patch('/:id', action, _update(Model, fields.toUpdate))
     }else{
-      router.post('/', _update(Model, fields.toAdd)) 
+      router.patch('/:id', _update(Model, fields.toUpdate)) 
     }
 
     if(!!applyTo.getByID){
-      router.post('/', action, _getByID(Model, fields.toAdd))
+      router.get('/:id', action, _getByID(Model))
     }else{
-      router.post('/', _getByID(Model, fields.toAdd)) 
+      router.get('/:id', _getByID(Model)) 
     }
 
     if(!!applyTo.getAll){
-      router.post('/', action, _getAll(Model, fields.toAdd))
+      router.get('/', action, _getAll(Model))
     }else{
-      router.post('/', _getAll(Model, fields.toAdd)) 
+      router.get('/', _getAll(Model)) 
     }
 
   }else{
