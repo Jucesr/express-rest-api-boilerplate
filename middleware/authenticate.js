@@ -1,7 +1,14 @@
-const authService = require('../services/auth.service');
+const authService = require('../services/auth.service')
+const errors = require('../config/errors')
 
 module.exports = (req, res, next) => {
   let tokenToVerify;
+
+  let error_objet = {
+    isCustomError: true,
+    html_code: 401,
+    body: errors.MISSING_TOKEN
+}
 
   if (req.header('Authorization')) {
     const parts = req.header('Authorization').split(' ');
@@ -13,28 +20,16 @@ module.exports = (req, res, next) => {
       if (/^Bearer$/.test(scheme)) {
         tokenToVerify = credentials;
       } else {
-        return next({
-            code: 0,
-            html_code: 401,
-            body: 'Format for Authorization: Bearer [token]'
-        })
+        return next(error_objet)
       }
     } else {
-        return next({
-            code: 0,
-            html_code: 401,
-            body: 'Format for Authorization: Bearer [token]'
-        })
+        return next(error_objet)
     }
   } else if (req.body.token) {
     tokenToVerify = req.body.token;
     delete req.query.token;
   } else {
-        return next({
-            code: 0,
-            html_code: 401,
-            body: 'Format for Authorization: Bearer [token]'
-        })
+        return next(error_objet)
   }
 
   return authService.verify(tokenToVerify, (err, thisToken) => {

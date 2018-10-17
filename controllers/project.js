@@ -1,12 +1,13 @@
 const express = require('express');
 const error_handler = require('../middleware/error_handler')
 const authenticate = require('../middleware/authenticate')
-const crudOperations = require('./crud');
+const addcrudRoutes = require('./crud');
 const logService = require('../services/log.service');
-const router = express.Router()
+let router = express.Router()
 
 module.exports = (Project) => {
-    router.post('/', authenticate, crudOperations._create(Project, [
+
+    const fieldsToInclude = [
         'name',
         'code',
         'description',
@@ -14,11 +15,9 @@ module.exports = (Project) => {
         'type',
         'currency',
         'uen'
-    ]))
-    
-    router.delete('/:id', authenticate, crudOperations._delete(Project))
-    
-    router.patch('/:id', authenticate, crudOperations._update(Project, [
+    ]
+
+    const fieldsToUpdate = [
         'name',
         'code',
         'description',
@@ -26,11 +25,22 @@ module.exports = (Project) => {
         'type',
         'currency',
         'uen'
-    ]))
-    
-    router.get('/:id', authenticate, crudOperations._getByID(Project))
-    
-    router.get('/', authenticate, crudOperations._getAll(Project))
+    ]
+
+    router.use(authenticate)
+
+    router = addcrudRoutes({
+        model: Project,
+        router,
+        fields: {
+            toAdd: fieldsToInclude,
+            toUpdate: fieldsToUpdate
+        }
+    })
+
+    //--------------------------------------------------------------------------------------
+    //  Additional routes.
+    //--------------------------------------------------------------------------------------
 
     router.get('/:id/estimates', authenticate ,(req, res, next) => {
         const id = req.params.id

@@ -1,11 +1,12 @@
 const express = require('express');
 const error_handler = require('../middleware/error_handler')
 const authenticate = require('../middleware/authenticate')
-const crudOperations = require('./crud');
-const router = express.Router()
+const addcrudRoutes = require('./crud');
+let router = express.Router()
 
 module.exports = (Material) => {
-    router.post('/', authenticate, crudOperations._create(Material, [
+
+    const fieldsToInclude = [
         'project_id',
         'is_service',
         'code',
@@ -16,11 +17,9 @@ module.exports = (Material) => {
         'other_cost',
         'waste_cost',
         'unit_rate'
-    ]))
+    ]
 
-    router.delete('/:id', authenticate, crudOperations._delete(Material))
-
-    router.patch('/:id', authenticate, crudOperations._update(Material, [
+    const fieldsToUpdate = [
         'is_service',
         'code',
         'description',
@@ -30,11 +29,18 @@ module.exports = (Material) => {
         'other_cost',
         'waste_cost',
         'unit_rate'
-    ]))
+    ]
 
-    router.get('/:id', authenticate, crudOperations._getByID(Material))
+    router.use(authenticate)
 
-    router.get('/', authenticate, crudOperations._getAll(Material))
+    router = addcrudRoutes({
+        model: Material,
+        router,
+        fields: {
+            toAdd: fieldsToInclude,
+            toUpdate: fieldsToUpdate
+        }
+    })
 
     router.use(error_handler('Material'))
 

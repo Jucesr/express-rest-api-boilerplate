@@ -19,7 +19,7 @@ module.exports = (Model, ENTITY_NAME) => {
       entity => {
         if(!entity){
           return Promise.reject({
-            isCustomError: 1,
+            isCustomError: true,
             body: errors.ENTITY_NOT_FOUND.replace('@ENTITY_NAME', ENTITY_NAME)  
           })
         }
@@ -42,7 +42,7 @@ module.exports = (Model, ENTITY_NAME) => {
       entity => {
         if(!entity){
           return Promise.reject({
-            isCustomError: 1,
+            isCustomError: true,
             body: errors.ENTITY_NOT_FOUND.replace('@ENTITY_NAME', ENTITY_NAME)  
           })
         }
@@ -61,7 +61,7 @@ module.exports = (Model, ENTITY_NAME) => {
       entity => {
         if(!entity){
           return Promise.reject({
-            isCustomError: 1,
+            isCustomError: true,
             body: errors.ENTITY_NOT_FOUND.replace('@ENTITY_NAME', ENTITY_NAME)  
           })
         }
@@ -86,7 +86,7 @@ module.exports = (Model, ENTITY_NAME) => {
       entity => {
         if(!entity){
           return Promise.reject({
-            isCustomError: 1,
+            isCustomError: true,
             body: errors.ENTITY_NOT_FOUND.replace('@ENTITY_NAME', ENTITY_NAME)  
           })
         }

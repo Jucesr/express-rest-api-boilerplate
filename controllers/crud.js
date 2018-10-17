@@ -1,35 +1,25 @@
-const logService = require('../services/log.service');
+const logService = require('../services/log.service')
+const errors = require('../config/errors')
+const utils = require('../utils/utils')
 
 const _create = (Model, fieldsToInclude) => {
     
   return (req, res, next) => {
 
-    let new_entity = {};
     
-    //  Prepare the new entity with all the required fields
-    for (let index = 0; index < fieldsToInclude.length; index++) {
-        
-        let field = fieldsToInclude[index]
+    let new_entity = {};
 
-        if (req.body.hasOwnProperty(field)) {
-            new_entity[ field ] = req.body[ field ]
-        }else{
-            return next({
-                code: 0,
-                body: `Property ${field} is required.`
-            })
-        }
-
+    try {
+        new_entity = utils.validateRequiredFields(req.body, fieldsToInclude);    
+    } catch (error) {
+        return next(error);
     }
     
     Model._create(new_entity).then( stored_entity => {
         res.send(stored_entity)
         logService.log(`An ${Model.getTableName()} was saved`)
         
-    }).catch( e => next({
-        code: !!e.isCustomError ? 0 : 1,
-        body: !!e.isCustomError? e.body : e
-    }) )
+    }).catch( e => next(e))
 
   }
 }
@@ -46,10 +36,7 @@ const _delete = (Model) => {
             logService.log(`${Model.getTableName()} was removed`)
         
 
-    }).catch( e => next({
-        code: !!e.isCustomError ? 0 : 1,
-        body: !!e.isCustomError? e.body : e
-    }) )
+    }).catch( e => next(e))
 
 
   }
@@ -78,10 +65,7 @@ const _update = (Model, fieldsToInclude) => {
             res.status(200).send(entity)
             logService.log(`${Model.getTableName()} was updated`)
 
-    }).catch( e => next({
-        code: !!e.isCustomError ? 0 : 1,
-        body: !!e.isCustomError? e.body : e
-    }) )
+    }).catch( e => next(e))
 
   }
 }
@@ -94,10 +78,7 @@ const _getAll = (Model) => {
       (entities) => {
         res.send(entities)
         logService.log(`${Model.getTableName()} were sent`)
-    }).catch( e => next({
-        code: 1,
-        body: e
-    }))
+    }).catch( e => next(e))
   }
 }
 
@@ -113,17 +94,65 @@ const _getByID = (Model) => {
             res.status(200).send(entity)
             logService.log(`${Model.getTableName()} was sent`)
 
-    }).catch( e => next({
-        code: 1,
-        body: e
-    }))
+    }).catch( e => next(e))
   }
 }
 
-module.exports = {
-    _create,
-    _delete,
-    _update,
-    _getByID,
-    _getAll
+module.exports = (options) => {
+  //TODO:  Redo this function. Really ugly
+  let {
+    model: Model, 
+    router, 
+    fields
+  } = options;
+
+  if(options.hasOwnProperty('middleware')){
+    let {applyTo, action} = options.middleware
+    
+    if(!!applyTo.create){
+      router.post('/', action, _create(Model, fields.toAdd))
+    }else{
+      router.post('/', _create(Model, fields.toAdd)) 
+    }
+
+    if(!!applyTo.delete){
+      router.post('/', action, _delete(Model, fields.toAdd))
+    }else{
+      router.post('/', _delete(Model, fields.toAdd)) 
+    }
+
+    if(!!applyTo.update){
+      router.post('/', action, _update(Model, fields.toAdd))
+    }else{
+      router.post('/', _update(Model, fields.toAdd)) 
+    }
+
+    if(!!applyTo.getByID){
+      router.post('/', action, _getByID(Model, fields.toAdd))
+    }else{
+      router.post('/', _getByID(Model, fields.toAdd)) 
+    }
+
+    if(!!applyTo.getAll){
+      router.post('/', action, _getAll(Model, fields.toAdd))
+    }else{
+      router.post('/', _getAll(Model, fields.toAdd)) 
+    }
+
+  }else{
+    router.post('/', _create(Model, fields.toAdd))
+
+    router.delete('/:id', _delete(Model))
+
+    router.patch('/:id', _update(Model, fields.toUpdate))
+
+    router.get('/:id', _getByID(Model))
+
+    router.get('/', _getAll(Model))
+  }
+
+  
+
+  return router;
+  
 }
