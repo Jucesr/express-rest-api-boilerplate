@@ -1,4 +1,5 @@
-const express = require('express');
+const express = require('express')
+const async_handler = require('express-async-handler')
 const error_handler = require('../middleware/error_handler')
 const authenticate = require('../middleware/authenticate')
 const addcrudRoutes = require('./crud');
@@ -36,16 +37,15 @@ module.exports = (Estimate) => {
     //  Additional routes.
     //--------------------------------------------------------------------------------------
 
-    router.get('/:id/estimate_item', authenticate ,(req, res, next) => {
+    router.get( '/:id/estimate_item', async_handler( async (req, res, next) => {
         const id = req.params.id
-        Estimate._getEstimateItems(id).then(entities => {
-            res.status(200).send(entities)
-            logService.log(`Estimate items were sent`)
-        }).catch( e => next({
-            code: !!e.isCustomError ? 0 : 1,
-            body: !!e.isCustomError? e.body : e
-        }) )
-    })
+
+        let entities = await Estimate._getEstimateItems(id)
+
+        res.status(200).send(entities)
+        logService.log(`Estimate items were sent`)
+
+    }))
 
     router.use(error_handler('Estimate'))
 

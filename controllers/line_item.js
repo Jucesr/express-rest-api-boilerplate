@@ -43,17 +43,14 @@ module.exports = (LineItem) => {
     //  Additional routes.
     //--------------------------------------------------------------------------------------
 
-    router.get('/:id/detail' ,(req, res, next) => {
+    router.get('/:id/detail' , async_handler (async (req, res, next) => {
         const id = req.params.id
-        LineItem._getDetails(id).then(entities => {
-            debugger;
-            res.status(200).send(entities)
-            logService.log(`Line item details were sent`)
-        }).catch( e => next({
-            code: !!e.isCustomError ? 0 : 1,
-            body: !!e.isCustomError? e.body : e
-        }) )
-    })
+
+        let entities = await LineItem._getDetails(id)
+        res.status(200).send(entities)
+        logService.log(`Line item details were sent`)
+
+    }))
 
     /** Add one or more line_item_detail instances to the Line item referenced by ID
      * 

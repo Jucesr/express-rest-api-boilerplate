@@ -1,8 +1,9 @@
-const express = require('express');
+const express = require('express')
+const async_handler = require('express-async-handler')
 const error_handler = require('../middleware/error_handler')
 const authenticate = require('../middleware/authenticate')
-const addcrudRoutes = require('./crud');
-const logService = require('../services/log.service');
+const addcrudRoutes = require('./crud')
+const logService = require('../services/log.service')
 let router = express.Router()
 
 module.exports = (Project) => {
@@ -42,27 +43,23 @@ module.exports = (Project) => {
     //  Additional routes.
     //--------------------------------------------------------------------------------------
 
-    router.get('/:id/estimates', authenticate ,(req, res, next) => {
+    router.get('/:id/estimates' , async_handler (async (req, res, next) => {
         const id = req.params.id
-        Project._getEstimates(id).then(entities => {
-            res.status(200).send(entities)
-            logService.log(`Estimates were sent`)
-        }).catch( e => next({
-            code: !!e.isCustomError ? 0 : 1,
-            body: !!e.isCustomError? e.body : e
-        }) )
-    })
 
-    router.get('/:id/parameters', authenticate ,(req, res, next) => {
+        let entities = await Project._getEstimates(id)
+        res.status(200).send(entities)
+        logService.log(`Estimates were sent`)
+
+    }))
+
+    router.get('/:id/parameters', async_handler (async (req, res, next) => {
         const id = req.params.id
-        Project._getParameters(id).then(entities => {
-            res.status(200).send(entities)
-            logService.log(`Parameters were sent`)
-        }).catch( e => next({
-            code: !!e.isCustomError ? 0 : 1,
-            body: !!e.isCustomError? e.body : e
-        }) )
-    })
+
+        let entities = await Project._getParameters(id)
+        res.status(200).send(entities)
+        logService.log(`Parameters were sent`)
+
+    }))
     
     router.use(error_handler('Project'))
 
