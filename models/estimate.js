@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
 
   let Estimate = sequelize.define(ENTITY_NAME, {
     code: {
-      type: DataTypes.STRING(10)
+      type: DataTypes.STRING(10),
+      unique: true
     },
     name: {
       type: DataTypes.STRING(50)

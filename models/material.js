@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN
     },
     code: {
-      type: DataTypes.STRING(10)
+      type: DataTypes.STRING(10),
+      unique: true
     },
     description: {
       type: DataTypes.STRING(255)
