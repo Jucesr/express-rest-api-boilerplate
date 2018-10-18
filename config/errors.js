@@ -10,5 +10,6 @@ module.exports = {
     INTERNAL_ERROR: 'Internal server error, please contact the administrator.',
     INCORRECT_PASSWORD: 'The password or username are not valid.',
     MISSING_PROPERTY: 'Property @PROPERTY is required.',
-    MISSING_TOKEN: 'Token invalid. Please sign in to get a new one'
+    MISSING_TOKEN: 'Token invalid. Please sign in to get a new one',
+    LINE_ITEM_RECURSION: 'A line item cannot add itself, this would cause infinite recursion.'
 }

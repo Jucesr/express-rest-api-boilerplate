@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     formula: {
       type: DataTypes.STRING(255)
     }
+    
   }, { 
       tableName: ENTITY_NAME,
       underscored: true 
@@ -23,17 +24,22 @@ module.exports = (sequelize, DataTypes) => {
   Line_Item_Detail = addCrudOperations(Line_Item_Detail, ENTITY_NAME);
 
   Line_Item_Detail.associate = function (models) {
+    
 		Line_Item_Detail.belongsTo(models.material, 
 			{
-				foreignKey: 'material_id',
-				constraints: false
+				foreignKey: {
+          name: 'material_id',
+          allowNull: true
+        }
 			}
 		)
 
 		Line_Item_Detail.belongsTo(models.line_item, 
 			{
-				foreignKey: 'assembly_id',
-				constraints: false
+        foreignKey: {
+          name: 'assembly_id',
+          allowNull: true
+        }
 			}
 		)
   }

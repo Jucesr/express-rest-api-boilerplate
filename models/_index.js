@@ -31,6 +31,11 @@ Object.keys(models).forEach(async function(modelName) {
     models[modelName].associate(models);
   }
 
+  //  Add instance methods that require other model functions
+  if (models[modelName].instanceMethods) {
+    models[modelName].instanceMethods(models);
+  }
+
   //  Create the tables
   //await models[modelName].sync({force: true})
 });

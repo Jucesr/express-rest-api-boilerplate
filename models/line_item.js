@@ -17,6 +17,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     uom: {
       type: DataTypes.STRING(20)
+    },
+    unit_rate_mxn: {
+      type: DataTypes.VIRTUAL
+    },
+    unit_rate_usd: {
+      type: DataTypes.VIRTUAL
     }
   }, { 
       tableName: ENTITY_NAME,
@@ -25,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
   
   LineItem = addCrudOperations(LineItem, ENTITY_NAME);
 
+
+  /** Get all the line item details as an array. It calculates unit rate in mxn and usd. 
+   * @param {Object} id - The id of the line item
+   * @returns {Array} - The array of line item details with unit rate.
+   */
   LineItem._getDetails = function (id) {
     return this._findByIdAndDoAction(id, 
       entity => {
@@ -73,6 +84,10 @@ module.exports = (sequelize, DataTypes) => {
     )
   }
 
+  /** Get unit rate of the line item.  
+   * @param {Object} id - The id of the line item
+   * @returns {Object} - Object with 2 properties, unit rate in mxn and usd.
+   */
   LineItem._getTotals = function (id) {
     
     return LineItem._getDetails(id).then(details => {
@@ -91,10 +106,36 @@ module.exports = (sequelize, DataTypes) => {
     })
   }
 
+  /**@override 
+   * @param {Object} id - The id of the line item
+   */
+  LineItem._findById = function (id) {
+    return LineItem._findByIdAndDoAction(id, (entity) => {
+
+      return LineItem._getTotals(id).then(totals => {
+
+        entity.unit_rate_mxn = totals.unit_rate_mxn
+        entity.unit_rate_usd = totals.unit_rate_usd
+
+        return entity
+      })
+    })
+  }
+
   LineItem.associate = function (models) {
     LineItem.hasMany(models.line_item_detail, {foreignKey: 'line_item_id'});
     //LineItem.hasMany(models.BOM)
     //LineItem.belongsTo(models.wbs_item)
+  }
+
+  LineItem.instanceMethods = function (models) {
+    LineItem.prototype.buildLineItemDetail = function (json) {
+      
+      const Line_Item_Detail = models.line_item_detail
+
+      return Line_Item_Detail.build(json)
+
+    }
   }
 
   return LineItem;
