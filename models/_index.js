@@ -37,6 +37,7 @@ Object.keys(models).forEach(async function(modelName) {
   }
 
   //  Create the tables
+  // await models['estimate_item'].sync({force: true})
   //await models[modelName].sync({force: true})
 });
 debugger;

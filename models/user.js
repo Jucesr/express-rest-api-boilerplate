@@ -67,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
             if(entity.length == 0){
               return Promise.reject({
                   isCustomError: 1,
-                  body: errors.ENTITY_NOT_FOUND.replace('@ENTITY_NAME', ENTITY_NAME)  
+                  body: errors.ENTITY_NOT_FOUND.replace('@ENTITY_NAME', ENTITY_NAME).replace('@ID', username)    
               })
             }
 

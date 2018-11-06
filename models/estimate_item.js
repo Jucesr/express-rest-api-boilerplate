@@ -5,15 +5,17 @@ const ENTITY_NAME = 'Estimate_Item';
 module.exports = (sequelize, DataTypes) => {
 
   let EstimateItem = sequelize.define(ENTITY_NAME, {
+    parent_id: {
+      type: DataTypes.INTEGER
+    },
     is_disable: {
       type: DataTypes.BOOLEAN
     },
+    code: {
+      type: DataTypes.STRING(40)
+    },
     description: {
       type: DataTypes.STRING(255)
-    },
-    code: {
-      type: DataTypes.STRING(40),
-      unique: true
     },
     quantity: {
       type: DataTypes.DECIMAL(10, 5),
@@ -22,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     hierachy_level: {
       type: DataTypes.INTEGER
     },
-    is_item: {
+    is_line_item: {
       type: DataTypes.BOOLEAN
     },
     indirect_percentage: {
@@ -36,7 +38,16 @@ module.exports = (sequelize, DataTypes) => {
   EstimateItem = addCrudOperations(EstimateItem, ENTITY_NAME);
 
   EstimateItem.associate = function (models) {
-    EstimateItem.belongsTo(models.line_item, {foreignKey: 'line_item_id'})
+
+    EstimateItem.belongsTo(models.line_item, 
+			{
+				foreignKey: {
+          name: 'line_item_id',
+          allowNull: true
+        }
+			}
+		)
+
     //EstimateItem.hasOne(models.estimate_item_qto)
     //EstimateItem.belongsTo(models.wbs_item)
   }

@@ -29,7 +29,7 @@ module.exports = (LineItem) => {
         'uom'
     ]
 
-    router.use(authenticate)
+    // router.use(authenticate)
 
     router = addcrudRoutes({
         model: LineItem,
@@ -47,36 +47,35 @@ module.exports = (LineItem) => {
     router.get('/:id/detail' , async_handler (async (req, res, next) => {
         const id = req.params.id
 
-        let entities = await LineItem._getDetails(id)
+        let line_item = await LineItem._findById(id)
+        let details = line_item.getDetails()
         res.status(200).send(entities)
         logService.log(`Line item details were sent`)
 
     }))
 
-    // TODO: 
-    // * Validate relation to material or line item ids exits. 
-    // * Receive a flag to know wherer It is need to update or create a new one
-    // * If it does not exits, create the new material as a service. 
 
-    /** Add one or more line_item_detail instances to the Line item referenced by ID
+    /** Add one or more line_item_detail (LID) for testing purpuses
+     *
      * 
      * @param {int} id - The ID that identify the line item.
      * @param {Array} req.body - An array of line item detail objects. 
      * 
      */
-    router.post('/:id/detail' , async_handler (async (req, res, next) => {
+    router.post('/:id/details' , async_handler (async (req, res, next) => {
         const id = req.params.id
-
-        const lineItem = await LineItem._findById(id)
+        
+        const lineItem = await LineItem.findById(id)
 
         const array_of_line_item_details = req.body;
 
-        let promises = array_of_line_item_details.map(element => {
+        let promises = array_of_line_item_details.map(async element => {
 
             let new_element = {}
 
             if(!element.is_assembly){
                 new_element = utils.validateRequiredFields(element, [
+                    'material_code',
                     'material_id',
                     'is_assembly',
                     'quantity',
@@ -93,6 +92,7 @@ module.exports = (LineItem) => {
                 }
 
                 new_element = utils.validateRequiredFields(element, [
+                    'assembly_code',
                     'assembly_id',
                     'is_assembly',
                     'quantity',
@@ -100,7 +100,13 @@ module.exports = (LineItem) => {
                 ]); 
                 
             }
-            return lineItem.createLine_Item_Detail(new_element)
+
+            //  Get unit rate of the LID
+            let entity = await lineItem.addDetail(new_element)
+            
+
+
+            return lineItem.addDetail(new_element)
         });
         
 
@@ -112,6 +118,58 @@ module.exports = (LineItem) => {
         logService.log(`Line item details were added`)
 
     }))
+
+    // TODO: 
+    // * Validate relation to material or line item ids exits. 
+    // * If it does not exits, create the new material as a service. 
+
+    /** Add a line_item_detail (LID) instance referenced by id or code to the Line item 
+     * It search the LID in the database by code or item. 
+     * It takes the unit rate of the LID in both currencies and it calculates the unit rate of the Line item
+     * It saves the line item with the new unit rate
+     * 
+     * @param {int} id - The ID that identify the line item.
+     * @param {Object} req.body - The LID. 
+     * 
+     */
+    router.post('/:id/detail' , async_handler (async (req, res, next) => {
+        const id = req.params.id
+        
+        const lineItem = await LineItem.findById(id)
+
+        let line_item_detail = req.body;
+
+        line_item_detail = utils.validateRequiredFields(line_item_detail, [
+            'id',
+            'code',
+            'is_assembly',
+            'quantity',
+            'formula'    
+        ]);
+
+        if(line_item_detail.is_assembly){
+
+            //  This is is to avoid recursion.
+            if(id == line_item_detail.id){
+                throw {
+                    isCustomError: true,
+                    body: errors.LINE_ITEM_RECURSION
+                }
+            }
+        }
+
+
+        const lid = lineItem.addDetail(line_item_detail)
+
+        //  Everything went well
+
+        res.status(200).send(lid)
+        logService.log(`Line item detail was added`)
+
+    }))
+
+
+    
 
     router.use(error_handler('LineItem'))
 

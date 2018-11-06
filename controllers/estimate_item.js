@@ -11,27 +11,29 @@ module.exports = (EstimateItem) => {
         'estimate_id',
         'line_item_id',
         'wbs_item_id',
+        'parent_id',
         'is_disable',
         'description',
         'code',
         'quantity',
         'hierachy_level',
-        'is_item',
+        'is_line_item',
         'indirect_percentage'
     ]
 
     const fieldsToUpdate = [
         'wbs_item_id',
+        'parent_id',
         'is_disable',
         'description',
         'code',
         'quantity',
         'hierachy_level',
-        'is_item',
+        'is_line_item',
         'indirect_percentage'
     ]
 
-    router.use(authenticate)
+    // router.use(authenticate)
 
     router = addcrudRoutes({
         model: EstimateItem,
