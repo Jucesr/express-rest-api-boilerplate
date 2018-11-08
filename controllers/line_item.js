@@ -46,82 +46,15 @@ module.exports = (LineItem) => {
 
     router.get('/:id/detail' , async_handler (async (req, res, next) => {
         const id = req.params.id
-
         let line_item = await LineItem._findById(id)
-        let details = line_item.getDetails()
-        res.status(200).send(entities)
+        let details = await line_item.getDetails()
+        res.status(200).send(details)
         logService.log(`Line item details were sent`)
 
     }))
 
-
-    /** Add one or more line_item_detail (LID) for testing purpuses
-     *
-     * 
-     * @param {int} id - The ID that identify the line item.
-     * @param {Array} req.body - An array of line item detail objects. 
-     * 
-     */
-    router.post('/:id/details' , async_handler (async (req, res, next) => {
-        const id = req.params.id
-        
-        const lineItem = await LineItem.findById(id)
-
-        const array_of_line_item_details = req.body;
-
-        let promises = array_of_line_item_details.map(async element => {
-
-            let new_element = {}
-
-            if(!element.is_assembly){
-                new_element = utils.validateRequiredFields(element, [
-                    'material_code',
-                    'material_id',
-                    'is_assembly',
-                    'quantity',
-                    'formula'    
-                ]);
-                
-            }else{
-                //  This is is to avoid recursion.
-                if(id == element.assembly_id){
-                    throw {
-                        isCustomError: true,
-                        body: errors.LINE_ITEM_RECURSION
-                    }
-                }
-
-                new_element = utils.validateRequiredFields(element, [
-                    'assembly_code',
-                    'assembly_id',
-                    'is_assembly',
-                    'quantity',
-                    'formula'    
-                ]); 
-                
-            }
-
-            //  Get unit rate of the LID
-            let entity = await lineItem.addDetail(new_element)
-            
-
-
-            return lineItem.addDetail(new_element)
-        });
-        
-
-        const entities = await Promise.all(promises)
-
-        //  Everything went well
-
-        res.status(200).send(entities)
-        logService.log(`Line item details were added`)
-
-    }))
-
     // TODO: 
-    // * Validate relation to material or line item ids exits. 
-    // * If it does not exits, create the new material as a service. 
+    // * If it does not exits, create the new material as a service. This feature should be implemented by the client
 
     /** Add a line_item_detail (LID) instance referenced by id or code to the Line item 
      * It search the LID in the database by code or item. 
@@ -159,12 +92,48 @@ module.exports = (LineItem) => {
         }
 
 
-        const lid = lineItem.addDetail(line_item_detail)
+        const lid = await lineItem.addDetail(line_item_detail)
 
         //  Everything went well
 
         res.status(200).send(lid)
         logService.log(`Line item detail was added`)
+
+    }))
+
+    router.patch('/:id/detail/:lid_id', async_handler (async (req, res, next) => {
+        const id = req.params.id
+        const LID_id = req.params.lid_id
+    
+        const lineItem = await LineItem.findById(id)
+
+        let line_item_detail = req.body;
+    
+        line_item_detail = utils.validateRequiredFields(line_item_detail, [
+            'id',
+            'code',
+            'is_assembly',
+            'quantity',
+            'formula'    
+        ]);
+
+        const lid = await lineItem.updateDetailByID(LID_id, line_item_detail)
+
+        res.status(200).send(lid)
+        logService.log(`Line item detail was updated`)
+
+    }))
+
+    router.delete('/:id/detail/:lid_id', async_handler (async (req, res, next) => {
+        const id = req.params.id
+        const LID_id = req.params.lid_id
+    
+        const lineItem = await LineItem.findById(id)
+
+        const lid = await lineItem.deleteDetailByID(LID_id)
+
+        res.status(200).send(lid)
+        logService.log(`Line item detail was updated`)
 
     }))
 
@@ -175,3 +144,4 @@ module.exports = (LineItem) => {
 
 return router;
 }
+
