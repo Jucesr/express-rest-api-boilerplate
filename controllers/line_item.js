@@ -9,7 +9,7 @@ let router = express.Router()
 
 const utils = require('../utils/utils')
 
-module.exports = (LineItem) => {
+module.exports = (LineItem, io) => {
 
     const fieldsToInclude = [
         'project_id',
@@ -46,7 +46,7 @@ module.exports = (LineItem) => {
 
     router.get('/:id/detail' , async_handler (async (req, res, next) => {
         const id = req.params.id
-        let line_item = await LineItem._findById(id)
+        let line_item = await LineItem.findById(id)
         let details = await line_item.getDetails()
         res.status(200).send(details)
         logService.log(`Line item details were sent`)
@@ -60,6 +60,7 @@ module.exports = (LineItem) => {
      * It search the LID in the database by code or item. 
      * It takes the unit rate of the LID in both currencies and it calculates the unit rate of the Line item
      * It saves the line item with the new unit rate
+     * It lets other clients know the Line Item has changed
      * 
      * @param {int} id - The ID that identify the line item.
      * @param {Object} req.body - The LID. 
@@ -94,7 +95,9 @@ module.exports = (LineItem) => {
 
         const lid = await lineItem.addDetail(line_item_detail)
 
-        //  Everything went well
+        //  Emit event to clients
+
+        io.sockets.emit('UPDATE_LINE_ITEM', lineItem.id);
 
         res.status(200).send(lid)
         logService.log(`Line item detail was added`)
@@ -118,6 +121,10 @@ module.exports = (LineItem) => {
         ]);
 
         const lid = await lineItem.updateDetailByID(LID_id, line_item_detail)
+
+        //  Emit event to clients
+
+        io.sockets.emit('UPDATE_LINE_ITEM', lineItem.id);
 
         res.status(200).send(lid)
         logService.log(`Line item detail was updated`)

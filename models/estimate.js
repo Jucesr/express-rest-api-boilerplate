@@ -25,6 +25,18 @@ module.exports = (sequelize, DataTypes) => {
   
   Estimate = addCrudOperations(Estimate, ENTITY_NAME);
 
+  Estimate._findById = function(id) {
+    return Estimate._findByIdAndDoAction(id, async (estimate) => {
+      let estimate_items = await estimate.getEstimate_Items()
+
+      estimate_json = estimate.get()
+
+      estimate_json.estimate_items = estimate_items.map(ei => ei.id)
+
+      return estimate_json
+    })
+  }
+
   Estimate._getEstimateItems = function (id) {
     return this._findByIdAndDoAction(id, entity => entity.getEstimate_Items())
   }

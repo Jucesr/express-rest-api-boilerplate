@@ -33,21 +33,26 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true 
   });
 
-  //  TODO: shoudl re calculate unit rate
+  LineItem = addCrudOperations(LineItem, ENTITY_NAME);
 
-  // LineItem._findById = function(id) {
-  //   return LineItem._findByIdAndDoAction(id, (line_item) => {
-  //     return line_item.calculateUnitRate()
-  //   })
-  // }
+
+  LineItem._findById = function(id) {
+    return LineItem._findByIdAndDoAction(id, async (line_item) => {
+      let line_item_details = await line_item.getLine_Item_Details()
+
+      line_item_json = line_item.get()
+
+      line_item_json.line_item_details = line_item_details.map(lid => lid.id)
+
+      return line_item_json
+    })
+  }
 
   LineItem.calculateUnitRate = function(id) {
     return LineItem._findByIdAndDoAction(id, (line_item) => {
       return line_item.calculateUnitRate()
     })
   }
-  
-  LineItem = addCrudOperations(LineItem, ENTITY_NAME);
 
   LineItem.associate = function (models) {
     LineItem.hasMany(models.line_item_detail, {foreignKey: 'line_item_id'});
@@ -66,16 +71,19 @@ module.exports = (sequelize, DataTypes) => {
 
       let proms = await array_of_details.map(async detail => {
         let unit_rate_mxn = 0, unit_rate_usd = 0
-        let entity_code, entity_id
+        let entity_code, entity_id, description, uom, currency
 
         if(detail.is_assembly){
           let item = await detail.getLine_Item()
 
           entity_code = item.code
           entity_id = item.id
+          description = item.spanish_description
+          currency = 'MXN'
+          uom = item.uom
 
-          unit_rate_mxn += item.unit_rate_mxn * detail.quantity
-          unit_rate_usd += item.unit_rate_usd * detail.quantity
+          unit_rate_mxn += item.unit_rate_mxn 
+          unit_rate_usd += item.unit_rate_usd
 
         }else{
 
@@ -83,21 +91,31 @@ module.exports = (sequelize, DataTypes) => {
 
           entity_code = material.code
           entity_id = material.id
+          description = material.description
+          uom = material.uom
+          currency = material.currency
 
           if(material.currency == 'MXN'){
-            unit_rate_mxn += material.unit_rate * detail.quantity
+            unit_rate_mxn += material.unit_rate
           }else{
-            unit_rate_usd += material.unit_rate * detail.quantity
+            unit_rate_usd += material.unit_rate
           }
 
         }
 
+        detail = detail.get()
+
         return {
-          ...detail.get(),
-          entity_code,
+          id: detail.id,
+          is_assembly: detail.is_assembly,
           entity_id,
+          entity_code,
+          description,
+          uom,
+          quantity: detail.quantity,
           unit_rate_mxn,
-          unit_rate_usd
+          unit_rate_usd,
+          currency
         }
       })
 
@@ -208,15 +226,18 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
 
+      //  TODO: Allow user to change code or ID.
       if(line_item_detail){
-        //  Validates if new fields are avaliable
-        line_item_detail.material_id = detail.id
-        line_item_detail.material_code = detail.code
-        line_item_detail.is_assembly = detail.is_assembly
-        line_item_detail.quantity = detail.quantity
-        line_item_detail.formula = detail.formula
 
-
+        if(detail.is_assembly){
+          line_item_detail.quantity = detail.quantity
+          line_item_detail.formula = detail.formula
+        }else{
+          //  Validates if new fields are avaliable
+          line_item_detail.quantity = detail.quantity
+          line_item_detail.formula = detail.formula
+        }
+        
         const new_detail = await line_item_detail.save()
 
         await line_item.calculateUnitRate()

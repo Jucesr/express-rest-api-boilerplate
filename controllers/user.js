@@ -5,7 +5,7 @@ const logService = require('../services/log.service');
 const addcrudRoutes = require('./crud')
 let router = express.Router()
 
-module.exports = (User) => {
+module.exports = (User, io) => {
     
     const fieldsToInclude = [
         'username',
@@ -39,6 +39,7 @@ module.exports = (User) => {
     //--------------------------------------------------------------------------------------
 
     router.post('/login', (req, res, next) => {
+
         const {body} = req;
         if( 
             (body.hasOwnProperty('email') || body.hasOwnProperty('username') ) && 
