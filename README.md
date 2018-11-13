@@ -7,6 +7,7 @@ This file is used to explain in detail changes I make to this API as I am buidin
   - [V0.1](#v01)
   - [V0.2](#v02)
   - [V0.3](#v03)
+  - [V0.4](#v04)
   - [Glossary](#glossary)
 
 <!-- /TOC -->
@@ -37,6 +38,12 @@ Date: Nov 9, 2018
 * Route to get LI provides and extra field 'line_item_details' that contains all the IDs to LIDs
 * Route to get Estimates provides and extra field 'estimate_items' that contains all the IDs to EIs
 * Add Socket.io support.
+
+## V0.4
+Date: Nov 12, 2018
+
+* Add 'picture_url' property to Project model.
+* Disable authentification for all routes for testing purposes.
 
 ## Glossary
 

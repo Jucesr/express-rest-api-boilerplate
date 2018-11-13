@@ -28,6 +28,12 @@ module.exports = (sequelize, DataTypes) => {
     uen: {
       type:   DataTypes.ENUM,
       values: ['MXL', 'MTY', 'TIJ', 'CDMX']
+    },
+    picture_url: {
+      type: DataTypes.STRING(255)
+    },
+    progress: {
+      type: DataTypes.DECIMAL(10,2)
     }
   }, { 
       tableName: ENTITY_NAME,

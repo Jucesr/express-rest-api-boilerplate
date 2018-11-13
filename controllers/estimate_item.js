@@ -33,7 +33,7 @@ module.exports = (EstimateItem) => {
         'indirect_percentage'
     ]
 
-    // router.use(authenticate)
+    router.use(authenticate)
 
     router = addcrudRoutes({
         model: EstimateItem,

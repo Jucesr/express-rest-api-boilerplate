@@ -15,7 +15,8 @@ module.exports = (Project) => {
         'status',
         'type',
         'currency',
-        'uen'
+        'uen',
+        'picture_url'
     ]
 
     const fieldsToUpdate = [
@@ -25,7 +26,8 @@ module.exports = (Project) => {
         'status',
         'type',
         'currency',
-        'uen'
+        'uen',
+        'picture_url'
     ]
 
     router.use(authenticate)

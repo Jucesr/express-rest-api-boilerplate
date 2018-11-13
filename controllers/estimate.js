@@ -37,7 +37,7 @@ module.exports = (Estimate) => {
     //  Additional routes.
     //--------------------------------------------------------------------------------------
 
-    router.get( '/:id/estimate_item', async_handler( async (req, res, next) => {
+    router.get( '/:id/estimate_items', async_handler( async (req, res, next) => {
         const id = req.params.id
 
         let entities = await Estimate._getEstimateItems(id)
