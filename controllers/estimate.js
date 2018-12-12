@@ -2,7 +2,8 @@ const express = require('express')
 const async_handler = require('express-async-handler')
 const error_handler = require('../middleware/error_handler')
 const authenticate = require('../middleware/authenticate')
-const addcrudRoutes = require('./crud');
+const addcrudRoutes = require('./crud')
+const logService = require('../services/log.service')
 let router = express.Router()
 
 module.exports = (Estimate) => {
@@ -41,7 +42,6 @@ module.exports = (Estimate) => {
         const id = req.params.id
 
         let entities = await Estimate._getEstimateItems(id)
-
         res.status(200).send(entities)
         logService.log(`Estimate items were sent`)
 

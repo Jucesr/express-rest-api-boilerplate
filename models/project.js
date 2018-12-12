@@ -50,6 +50,10 @@ module.exports = (sequelize, DataTypes) => {
     return this._findByIdAndDoAction(id, entity => entity.getParameters())
   }
 
+  Project._getMaterials = function (id) {
+    return this._findByIdAndDoAction(id, entity => entity.getMaterials())
+  }
+
   Project.associate = function (models) {
     Project.hasMany(models.estimate)
     Project.hasMany(models.parameter)

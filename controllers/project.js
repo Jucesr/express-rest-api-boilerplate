@@ -50,7 +50,7 @@ module.exports = (Project) => {
 
         let entities = await Project._getEstimates(id)
         res.status(200).send(entities)
-        logService.log(`Estimates were sent`)
+        logService.log(`Estimates of project ${id} were sent`)
 
     }))
 
@@ -59,7 +59,16 @@ module.exports = (Project) => {
 
         let entities = await Project._getParameters(id)
         res.status(200).send(entities)
-        logService.log(`Parameters were sent`)
+        logService.log(`Parameters of project ${id} were sent`)
+
+    }))
+
+    router.get('/:id/materials', async_handler (async (req, res, next) => {
+        const id = req.params.id
+
+        let entities = await Project._getMaterials(id)
+        res.status(200).send(entities)
+        logService.log(`Materials of project ${id} were sent`)
 
     }))
     

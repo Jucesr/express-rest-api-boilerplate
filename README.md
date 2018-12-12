@@ -8,6 +8,8 @@ This file is used to explain in detail changes I make to this API as I am buidin
   - [V0.2](#v02)
   - [V0.3](#v03)
   - [V0.4](#v04)
+  - [V0.5](#v05)
+  - [V0.6](#v06)
   - [Glossary](#glossary)
 
 <!-- /TOC -->
@@ -44,6 +46,14 @@ Date: Nov 12, 2018
 
 * Add 'picture_url' property to Project model.
 * Disable authentification for all routes for testing purposes.
+
+## V0.5
+Date: Nov 14, 2018
+* Fix bug: "Can't change headers after they were sent". LogService was not imported in estimate controller.s
+
+## V0.6
+Date: Dec 12, 2018
+* Add route to endpoint 'project'. project/:id/materials
 
 ## Glossary
 
