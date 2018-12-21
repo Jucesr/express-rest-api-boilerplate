@@ -10,6 +10,7 @@ This file is used to explain in detail changes I make to this API as I am buidin
   - [V0.4](#v04)
   - [V0.5](#v05)
   - [V0.6](#v06)
+  - [V0.7](#v07)
   - [Glossary](#glossary)
 
 <!-- /TOC -->
@@ -56,7 +57,7 @@ Date: Dec 12, 2018
 * Add route to endpoint 'project'. project/:id/materials
 
 ## V0.7
-Date: Dec 12, 2018
+Date: Dec 20, 2018
 * Add route 'line_item/:id/copyTo/:project_id'. It lets you copy a line item to another project. It ill also create any sub line items or material that are need it for the main line item. 
 
 ## Glossary
