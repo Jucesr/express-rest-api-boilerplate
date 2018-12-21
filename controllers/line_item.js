@@ -144,6 +144,27 @@ module.exports = (LineItem, io) => {
 
     }))
 
+    /** Copy a line item from one project to another.
+     * It would create all the materials and sub line items need it.
+     * WARNING: This method will create any material that does not exists. If it already exist it would take 
+     * the current material. This could lead to some problems with the unit rate. 
+     * 
+     * @param {int} id - The ID that identify the line item that would be copy.
+     * @param {int} project_id - The ID of the project that the line item would be copy to. 
+     * 
+     */
+    router.put('/:id/copyTo/:project_id', async_handler (async (req, res, next) => {
+        const line_item_id = req.params.id
+        const project_id = parseInt(req.params.project_id, 10)
+    
+        const lineItem = await LineItem.findById(line_item_id)
+
+        const new_line_item = await lineItem.copyToAnotherProject(project_id)
+
+        res.status(200).send(new_line_item)
+        logService.log(`Line item ${line_item_id} was copy from project ${lineItem.project_id} to project ${project_id}`)
+
+    }))
 
     
 

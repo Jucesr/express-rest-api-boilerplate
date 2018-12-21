@@ -122,7 +122,7 @@ module.exports = (sequelize, DataTypes) => {
       let details = await Promise.all(proms)
 
       //  TODO: remove this block of code just to update Unit rate of items that were added after removing recursion calls
-              await line_item.calculateUnitRate()
+              //await line_item.calculateUnitRate()
 
       return details
     }
@@ -367,6 +367,122 @@ module.exports = (sequelize, DataTypes) => {
       LIDs = LIDs[0]
 
       return LIDs
+    }
+
+    /** Copy a line item from one project to another.
+     * It would create all the materials and sub line items need it.
+     * 
+     * @param {int} project_id - The ID of the project that the line item would be copy to. 
+     * 
+     */
+    LineItem.prototype.copyToAnotherProject = async function (project_id) {
+      let line_item = this;
+      const Material = models.material
+
+      const add_line_item = async function (line_item) {
+
+        //  Check if the item already exists in the database.
+        let already_exists = await LineItem.findOne({
+          where: {
+            [Op.and]: [
+              {code: line_item.code}, 
+              {project_id: project_id}
+            ]
+          }
+        })
+
+        if(already_exists){
+          //  It's on the database no need to add it again.
+          return already_exists
+        }
+          //  Call this method again to recursion.
+          // const new_assembly = await add_line_item(li)
+          // new_assembly_id = new_assembly.id
+          // new_assembly_id = already_exists.id
+        
+
+        //  Add new line item
+        let new_line_item = await LineItem.create({
+          code: line_item.code,
+          spanish_description: line_item.spanish_description,
+          english_description: line_item.english_description,
+          uom: line_item.uom,
+          // unit_rate_mxn: line_item.unit_rate_mxn,
+          // unit_rate_usd: line_item.unit_rate_usd,
+          project_id: project_id
+        }) 
+
+        let new_assembly_id = null, new_material_id = null
+
+        //  Get details of original line item so it can be added to the copy
+        let array_of_details = await line_item.getLine_Item_Details()
+
+        for (let index = 0; index < array_of_details.length; index++) {
+          const detail = array_of_details[index];
+          
+          if(detail.is_assembly){
+            //  Line item
+
+            const li = await LineItem.findById(detail.assembly_id)
+            //  Call this method again to recursion.
+            const new_assembly = await add_line_item(li)
+            new_assembly_id = new_assembly.id
+
+          }else{
+            //  Material
+            let material = await Material.findById(detail.material_id)
+            
+            let already_exists = await Material.findOne({
+              where: {
+                [Op.and]: [
+                  {code: material.code}, 
+                  {project_id: project_id}
+                ]
+              }
+            })
+            
+  
+            if(!already_exists){
+              //  it does not exist, create the material
+              
+              let new_material = await Material.create({
+                is_service: material.is_service,
+                code: material.code,
+                description: material.description,
+                uom: material.uom,
+                currency: material.currency,
+                base_cost: material.base_cost,
+                other_cost: material.other_cost,
+                waste_cost: material.waste_cost,
+                unit_rate: material.unit_rate,
+                project_id: project_id
+              })
+
+              new_material_id = new_material.id
+            }else{
+              new_material_id = already_exists.id
+            }
+  
+          }
+
+          //  Add the detail to the new line item.
+          const new_detail = await new_line_item.createLine_Item_Detail({
+            is_assembly: detail.is_assembly,
+            quantity: detail.quantity,
+            formula: detail.formula,
+            project_id: project_id,
+            material_id: new_material_id,
+            assembly_id: new_assembly_id
+          })
+        }
+
+        await new_line_item.calculateUnitRate()
+
+        return new_line_item
+      }
+
+      return add_line_item(line_item)
+
     }
 
 
