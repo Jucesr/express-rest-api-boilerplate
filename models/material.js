@@ -5,6 +5,12 @@ const ENTITY_NAME = 'Material';
 module.exports = (sequelize, DataTypes) => {
 
   let Material = sequelize.define(ENTITY_NAME, {
+    parent_id: {
+        type: DataTypes.INTEGER
+    },
+    is_item: {
+        type: DataTypes.BOOLEAN
+    },
     is_service: {
         type: DataTypes.BOOLEAN
     },

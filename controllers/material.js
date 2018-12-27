@@ -8,6 +8,8 @@ module.exports = (Material) => {
 
     const fieldsToInclude = [
         'project_id',
+        'parent_id',
+        'is_item',
         'is_service',
         'code',
         'description',
@@ -20,6 +22,7 @@ module.exports = (Material) => {
     ]
 
     const fieldsToUpdate = [
+        'parent_id',
         'is_service',
         'code',
         'description',

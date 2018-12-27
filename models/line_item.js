@@ -240,7 +240,7 @@ module.exports = (sequelize, DataTypes) => {
         
         const new_detail = await line_item_detail.save()
 
-        await line_item.calculateUnitRate()
+        return await line_item.calculateUnitRate()
 
         return new_detail
       }else{
@@ -293,6 +293,7 @@ module.exports = (sequelize, DataTypes) => {
    */
     LineItem.prototype.calculateUnitRate = async function () {
       let line_item = this
+      let line_items_to_be_updated = []
 
       let array_of_details = await line_item.getLine_Item_Details()
 
@@ -343,14 +344,19 @@ module.exports = (sequelize, DataTypes) => {
             const LIDs = await line_item.getReferences()
 
             const proms2 = LIDs.map(lid => {
+              line_items_to_be_updated.push(lid.line_item_id)
               return LineItem.calculateUnitRate(lid.line_item_id)
             })
 
-            await Promise.all(proms2)
+            const matrix = await Promise.all(proms2)
+
+            matrix.map(array => line_items_to_be_updated.push(array))
 
       //----------------------------------
       
-      return new_line_item
+      
+
+      return line_items_to_be_updated
     }
 
     /** Get all the references where the line item is being used in form of LID. 
