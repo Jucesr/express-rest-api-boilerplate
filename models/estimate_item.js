@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     hierachy_level: {
       type: DataTypes.INTEGER
     },
-    is_line_item: {
+    is_item: {
       type: DataTypes.BOOLEAN
     },
     indirect_percentage: {

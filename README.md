@@ -61,10 +61,14 @@ Date: Dec 20, 2018
 * Add route 'line_item/:id/copyTo/:project_id'. It lets you copy a line item to another project. It will also create any sub line items or material that are need it for the main line item. 
 
 ## V0.8
-Date: Dec 28, 2018
+Date: Dec 26, 2018
 * Added 2 columns to Material entity.
   * parent_id: it is used to handle multiple levels of hierachy in the material catalog.
   * is_item: tell wether the entity is a valid item or a hierachy level. 
+
+## V0.9
+Date: Dec 27, 2018
+* Changed property 'is_line_item' to 'is_item' in estimate item entity
 
 ## Glossary
 

@@ -17,7 +17,7 @@ module.exports = (EstimateItem) => {
         'code',
         'quantity',
         'hierachy_level',
-        'is_line_item',
+        'is_item',
         'indirect_percentage'
     ]
 
@@ -29,7 +29,7 @@ module.exports = (EstimateItem) => {
         'code',
         'quantity',
         'hierachy_level',
-        'is_line_item',
+        'is_item',
         'indirect_percentage'
     ]
 
