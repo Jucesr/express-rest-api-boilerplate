@@ -22,6 +22,7 @@ module.exports = (EstimateItem) => {
     ]
 
     const fieldsToUpdate = [
+        'line_item_id',
         'wbs_item_id',
         'parent_id',
         'is_disable',

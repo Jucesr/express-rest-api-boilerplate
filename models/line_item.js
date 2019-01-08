@@ -175,10 +175,11 @@ module.exports = (sequelize, DataTypes) => {
         //  The LID that is being added it's a material.
         let material = await models.material.findOne({
           where: {
-            [Op.or]: [
-              {code: detail.code}, 
-              {id: detail.id}
-            ]
+              project_id: detail.project_id, 
+              [Op.or]: [
+                {code: detail.code}, 
+                {id: detail.id}
+              ]
           }
         })
 

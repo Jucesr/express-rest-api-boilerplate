@@ -93,7 +93,10 @@ module.exports = (LineItem, io) => {
         }
 
 
-        const lid = await lineItem.addDetail(line_item_detail)
+        const lid = await lineItem.addDetail({
+         ...line_item_detail,
+         project_id: lineItem.project_id   
+        })
 
         //  Emit event to clients
 
