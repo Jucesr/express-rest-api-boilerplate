@@ -16,7 +16,7 @@ module.exports = (io) => {
     let controllers = {}
     
     files.forEach(file => {
-        controllers[file] = require(`./${file}`)(Models[file], io)
+        controllers[file] = require(`./${file}`)(Models, io)
     })
 
     return controllers

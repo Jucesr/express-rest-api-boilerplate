@@ -5,7 +5,9 @@ const logService = require('../services/log.service');
 const addcrudRoutes = require('./crud')
 let router = express.Router()
 
-module.exports = (User, io) => {
+module.exports = (models, io) => {
+
+    const User = models.user;
     
     const fieldsToInclude = [
         'username',

@@ -6,7 +6,9 @@ const addcrudRoutes = require('./crud')
 const logService = require('../services/log.service')
 let router = express.Router()
 
-module.exports = (Estimate) => {
+module.exports = (models) => {
+
+    const Estimate = models.estimate;
 
     const fieldsToInclude = [
         'project_id',

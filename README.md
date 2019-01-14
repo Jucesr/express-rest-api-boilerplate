@@ -75,6 +75,12 @@ Date: Jan 08, 2019
 * Add line_item_id to fields that are able to be updated in the route of estimate item.
 * Add project_id to the query of addDetail method in line item model.
 
+## V0.2.1
+Date: Jan 14, 2019
+
+* Pass all the models to each controller. Before only 1 model was passed.
+* Add route to get a material by code. /:project_id/materials/:material_code'
+
 
 ## Glossary
 

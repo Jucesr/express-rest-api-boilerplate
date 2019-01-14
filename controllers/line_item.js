@@ -9,7 +9,9 @@ let router = express.Router()
 
 const utils = require('../utils/utils')
 
-module.exports = (LineItem, io) => {
+module.exports = (models, io) => {
+
+    const LineItem = models.line_item;
 
     const fieldsToInclude = [
         'project_id',

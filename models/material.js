@@ -1,8 +1,10 @@
 const addCrudOperations = require('./crud');
+const errors = require('../config/errors');
 
 const ENTITY_NAME = 'Material';
 
 module.exports = (sequelize, DataTypes) => {
+  const Op = sequelize.Op;
 
   let Material = sequelize.define(ENTITY_NAME, {
     parent_id: {
@@ -45,6 +47,27 @@ module.exports = (sequelize, DataTypes) => {
   });
   
   Material = addCrudOperations(Material, ENTITY_NAME);
+
+  Material.findByCode = async (project_id, material_code) => {
+    
+    const item = await Material.findOne({
+      where: {
+        [Op.and]: [
+          {code: material_code}, 
+          {project_id: project_id}
+        ]
+    }})
+
+    if(!item){
+      return Promise.reject({
+        isCustomError: true,
+        body: errors.ENTITY_NOT_FOUND.replace('@ENTITY_NAME', ENTITY_NAME).replace('@ID', material_code)  
+      })
+    }
+
+    return item
+
+  }
 
   Material.associate = function (models) {
     Material.hasMany(models.material_quotation)

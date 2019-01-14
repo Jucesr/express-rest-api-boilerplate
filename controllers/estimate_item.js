@@ -4,8 +4,9 @@ const authenticate = require('../middleware/authenticate')
 const addcrudRoutes = require('./crud');
 let router = express.Router()
 
-module.exports = (EstimateItem) => {
-
+module.exports = (models) => {
+    const EstimateItem = models.estimate_item
+    
     const fieldsToInclude = [
         'project_id',
         'estimate_id',
