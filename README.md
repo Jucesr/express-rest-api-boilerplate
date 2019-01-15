@@ -81,6 +81,11 @@ Date: Jan 14, 2019
 * Pass all the models to each controller. Before only 1 model was passed.
 * Add route to get a material by code. /:project_id/materials/:material_code'
 
+## V0.2.2
+Date: Jan 15, 2019
+
+* Add route to copy a material from one project to another. If the material has dependencies(parents) it will also copy them.
+
 
 ## Glossary
 

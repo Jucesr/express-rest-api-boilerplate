@@ -73,6 +73,68 @@ module.exports = (sequelize, DataTypes) => {
     Material.hasMany(models.material_quotation)
   }
 
+  Material.instanceMethods = function (models) {
+
+    /** Copy a material from one project to another.
+     * It would copy also all the dependencies of the material that is being copy (parents).
+     * If the material already exists it will only returned. It will do the same for dependencies.
+     * It uses the code to compare if the material already exists in the project that will be copy to.
+     * 
+     * @param {int} project_id - The ID of the project that the material would be copy to. 
+     * 
+     */
+    Material.prototype.copyToAnotherProject = function (project_id){
+      let material = this
+      const Material = models.material
+
+      const add_material = async function (material) {
+        //  Check if the item already exists in the project that will be copy to.
+        let already_exists = await Material.findOne({
+          where: {
+            [Op.and]: [
+              {code: material.code}, 
+              {project_id: project_id}
+            ]
+          }
+        })
+
+        if(already_exists){
+          //  It's on the project no need to add it again.
+          return already_exists
+        }
+
+        let new_parent_id = null
+        //  Check if it has a parent_id
+        if(material.parent_id != null){
+          let parent_material = await Material.findById(material.parent_id)
+          let new_parent_material = await add_material(parent_material)
+          new_parent_id = new_parent_material.id
+        }
+
+        //  Add new material
+        let new_material = await Material.create({
+          project_id: project_id,
+          parent_id: new_parent_id,
+          is_item: material.is_item,
+          is_service: material.is_service,
+          code: material.code,
+          description: material.description,
+          uom: material.uom,
+          currency: material.currency,
+          base_cost: material.base_cost,
+          other_cost: material.other_cost,
+          waste_cost: material.waste_cost,
+          unit_rate: material.unit_rate
+        })
+        
+        return new_material
+      }
+
+      return add_material(material)
+    }
+
+  }
+
   return Material;
 }
 
